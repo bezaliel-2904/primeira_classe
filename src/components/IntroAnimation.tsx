@@ -1,149 +1,105 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Airplane } from './Airplane';
 
 interface IntroAnimationProps {
   onComplete: () => void;
 }
 
+const INTRO_DURATION = 3200;
+
 export function IntroAnimation({ onComplete }: IntroAnimationProps) {
-  const [phase, setPhase] = useState(0);
-  const [isExiting, setIsExiting] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const planeRef = useRef<HTMLDivElement>(null);
-  const trailRef = useRef<SVGSVGElement>(null);
-  const reducedMotion = useRef(
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
+  const [phase, setPhase] = useState<'start' | 'fly' | 'exit'>('start');
+  const completedRef = useRef(false);
 
   useEffect(() => {
-    if (reducedMotion.current) {
-      const t = setTimeout(() => onComplete(), 300);
-      return () => clearTimeout(t);
-    }
-
-    const timers: ReturnType<typeof setTimeout>[] = [];
-
-    timers.push(setTimeout(() => setPhase(1), 200));
-    timers.push(setTimeout(() => setPhase(2), 600));
-    timers.push(setTimeout(() => setPhase(3), 2800));
-    timers.push(setTimeout(() => {
-      setIsExiting(true);
-    }, 3200));
-    timers.push(setTimeout(() => onComplete(), 3700));
-
-    return () => timers.forEach(clearTimeout);
-  }, [onComplete]);
-
-  useEffect(() => {
-    if (phase < 2 || !trailRef.current || !planeRef.current) return;
-
-    const svg = trailRef.current;
-    const plane = planeRef.current;
-    const container = containerRef.current;
-    if (!container) return;
-
-    const rect = container.getBoundingClientRect();
-    const W = rect.width;
-    const H = rect.height;
-
-    const startX = W * 0.08;
-    const startY = H * 0.72;
-    const cp1x = W * 0.25;
-    const cp1y = H * 0.2;
-    const cp2x = W * 0.55;
-    const cp2y = H * 0.85;
-    const endX = W * 0.92;
-    const endY = H * 0.28;
-
-    const pathD = `M ${startX} ${startY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endX} ${endY}`;
-    const pathEl = svg.querySelector('#trail-path') as SVGPathElement;
-    if (pathEl) {
-      pathEl.setAttribute('d', pathD);
-      const length = pathEl.getTotalLength();
-      pathEl.style.strokeDasharray = `2 6`;
-      pathEl.style.strokeDashoffset = `${length}`;
-      pathEl.getBoundingClientRect();
-      pathEl.style.transition = `stroke-dashoffset 2.2s cubic-bezier(0.45, 0, 0.55, 1)`;
-      pathEl.style.strokeDashoffset = `0`;
-    }
-
-    plane.style.transition = 'left 2.2s cubic-bezier(0.45, 0, 0.55, 1), top 2.2s cubic-bezier(0.45, 0, 0.55, 1)';
-    plane.style.left = `${endX}px`;
-    plane.style.top = `${endY}px`;
-
-    let angle = 0;
-    let raf = 0;
-    const startTime = performance.now();
-    const duration = 2200;
-
-    const animateAngle = (now: number) => {
-      const elapsed = now - startTime;
-      const t = Math.min(elapsed / duration, 1);
-      if (pathEl) {
-        const point = pathEl.getPointAtLength(t * (pathEl.getTotalLength()));
-        const next = pathEl.getPointAtLength(Math.min((t + 0.01) * pathEl.getTotalLength(), pathEl.getTotalLength()));
-        angle = Math.atan2(next.y - point.y, next.x - point.x) * (180 / Math.PI);
-        plane.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
-      }
-      if (t < 1) raf = requestAnimationFrame(animateAngle);
+    const finish = () => {
+      if (completedRef.current) return;
+      completedRef.current = true;
+      onComplete();
     };
-    raf = requestAnimationFrame(animateAngle);
 
-    return () => cancelAnimationFrame(raf);
-  }, [phase]);
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) {
+      const timer = window.setTimeout(finish, 450);
+      return () => window.clearTimeout(timer);
+    }
+
+    const startTimer = window.setTimeout(() => setPhase('fly'), 350);
+    const exitTimer = window.setTimeout(() => setPhase('exit'), 2550);
+    const finishTimer = window.setTimeout(finish, INTRO_DURATION);
+
+    return () => {
+      window.clearTimeout(startTimer);
+      window.clearTimeout(exitTimer);
+      window.clearTimeout(finishTimer);
+    };
+  }, [onComplete]);
 
   return (
     <div
-      ref={containerRef}
-      className={`fixed inset-0 z-[100] bg-creme-50 flex items-center justify-center overflow-hidden transition-opacity duration-500 ${
-        isExiting ? 'opacity-0' : 'opacity-100'
+      className={`fixed inset-0 z-[100] overflow-hidden bg-creme-50 transition-opacity duration-700 ${
+        phase === 'exit' ? 'pointer-events-none opacity-0' : 'opacity-100'
       }`}
+      aria-label="Primeira Classe Kids"
     >
-      {/* Logo text */}
-      <div
-        className={`absolute z-10 flex flex-col items-center transition-all duration-1000 ${
-          phase >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        } ${phase >= 3 ? 'scale-110' : 'scale-100'}`}
-      >
-        <div className="flex items-baseline gap-2 leading-none">
-          <span className="font-script text-sky-600 text-5xl md:text-7xl">Primeira</span>
-          <span className="font-script text-rose-500 text-5xl md:text-7xl">Classe</span>
-        </div>
-        <div className="flex items-center gap-2 mt-1">
-          <span className="font-sans text-sky-700 text-sm md:text-base tracking-ultra-wide font-medium">
-            KIDS
-          </span>
-        </div>
-      </div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(232,240,245,0.9),transparent_48%)]" />
+      <div className="absolute -left-24 top-1/4 h-72 w-72 rounded-full bg-sky-100/60 blur-3xl" />
+      <div className="absolute -right-20 bottom-10 h-80 w-80 rounded-full bg-rose-100/50 blur-3xl" />
 
-      {/* Trail SVG */}
-      <svg
-        ref={trailRef}
-        className="absolute inset-0 w-full h-full pointer-events-none z-0"
-        fill="none"
-      >
-        <path
-          id="trail-path"
-          stroke="#8EB5CC"
-          strokeWidth="2"
-          strokeLinecap="round"
-          fill="none"
-        />
-      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+        <div
+          className={`relative z-20 transition-all duration-1000 ease-out ${
+            phase === 'start' ? 'translate-y-4 scale-95 opacity-0' : 'translate-y-0 scale-100 opacity-100'
+          } ${phase === 'exit' ? 'scale-105 opacity-0' : ''}`}
+        >
+          <div className="flex items-baseline justify-center gap-2 leading-none">
+            <span className="font-script text-5xl text-sky-600 md:text-7xl">Primeira</span>
+            <span className="font-script text-5xl text-rose-500 md:text-7xl">Classe</span>
+          </div>
+          <div className="mt-2 flex items-center justify-center gap-3">
+            <span className="font-sans text-xs font-medium tracking-[0.35em] text-sky-700 md:text-sm">KIDS</span>
+            <span className="h-px w-10 bg-sky-300" />
+            <span className="font-sans text-[9px] uppercase tracking-[0.25em] text-ink-400">Moda Infantil</span>
+          </div>
+        </div>
 
-      {/* Airplane */}
-      <div
-        ref={planeRef}
-        className="absolute z-5 pointer-events-none"
-        style={{
-          left: phase >= 2 ? undefined : '8%',
-          top: phase >= 2 ? undefined : '72%',
-          transform: 'translate(-50%, -50%)',
-          opacity: phase >= 2 ? 1 : 0,
-          transition: 'opacity 0.3s ease-out',
-        }}
-      >
-        <Airplane size={44} />
+        <div className="absolute inset-x-0 top-[56%] h-24 md:top-1/2 md:h-32">
+          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 1200 120" preserveAspectRatio="none" fill="none" aria-hidden="true">
+            <path
+              d="M-20 92 C 180 10, 360 18, 560 78 S 930 102, 1220 20"
+              stroke="#8EB5CC"
+              strokeWidth="2"
+              strokeDasharray="3 8"
+              strokeLinecap="round"
+              pathLength="1"
+              className={`transition-[stroke-dashoffset] duration-[2200ms] ease-in-out ${
+                phase === 'start' ? '[stroke-dashoffset:1]' : '[stroke-dashoffset:0]'
+              }`}
+            />
+          </svg>
+
+          <div
+            className={`absolute left-[-5%] top-[72%] z-30 transition-all duration-[2200ms] ease-in-out ${
+              phase === 'start'
+                ? 'translate-x-0 -translate-y-1/2 rotate-[-20deg] opacity-0'
+                : phase === 'fly'
+                  ? 'translate-x-[108vw] -translate-y-[130%] rotate-[-8deg] opacity-100'
+                  : 'translate-x-[108vw] -translate-y-[130%] rotate-[-8deg] opacity-0'
+            }`}
+          >
+            <Airplane size={54} />
+          </div>
+        </div>
+
+        <div
+          className={`absolute bottom-10 flex items-center gap-3 transition-opacity duration-700 ${
+            phase === 'start' ? 'opacity-0' : phase === 'exit' ? 'opacity-0' : 'opacity-100'
+          }`}
+        >
+          <span className="h-px w-8 bg-sky-200" />
+          <span className="font-sans text-[9px] uppercase tracking-[0.28em] text-ink-400">Embarque nessa história</span>
+          <span className="h-px w-8 bg-sky-200" />
+        </div>
       </div>
     </div>
   );
