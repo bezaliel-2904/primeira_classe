@@ -9,12 +9,13 @@ import { Emotional } from './components/Emotional';
 import { FinalCTA } from './components/FinalCTA';
 import { Footer } from './components/Footer';
 import { useScrollReveal } from './hooks/useScrollReveal';
+import { AppErrorBoundary } from './components/AppErrorBoundary';
 
-function App() {
+function AppContent() {
   useScrollReveal();
 
   return (
-    <div className="animate-fade-in">
+    <div>
       <Header />
       <main>
         <Hero />
@@ -28,6 +29,14 @@ function App() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AppErrorBoundary>
+      <AppContent />
+    </AppErrorBoundary>
   );
 }
 
