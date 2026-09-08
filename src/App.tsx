@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Founders } from './components/Founders';
@@ -8,14 +9,19 @@ import { Gallery } from './components/Gallery';
 import { Emotional } from './components/Emotional';
 import { FinalCTA } from './components/FinalCTA';
 import { Footer } from './components/Footer';
+import { IntroAnimation } from './components/IntroAnimation';
 import { useScrollReveal } from './hooks/useScrollReveal';
 import { AppErrorBoundary } from './components/AppErrorBoundary';
 
 function AppContent() {
+  const [showIntro, setShowIntro] = useState(true);
+  const completeIntro = useCallback(() => setShowIntro(false), []);
+
   useScrollReveal();
 
   return (
     <div>
+      {showIntro && <IntroAnimation onComplete={completeIntro} />}
       <Header />
       <main>
         <Hero />
