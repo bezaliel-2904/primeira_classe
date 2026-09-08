@@ -1,13 +1,14 @@
 import { ArrowRight, MessageCircle, Plane } from 'lucide-react';
 
-const HERO_IMAGE = 'https://images.pexels.com/photos/1620759/pexels-photo-1620759.jpeg?auto=compress&cs=tinysrgb&w=1400';
+const HERO_IMAGE = 'https://images.pexels.com/photos/4715329/pexels-photo-4715329.jpeg?auto=compress&cs=tinysrgb&w=1600&h=2000&fit=crop';
+const HERO_FALLBACK = 'https://images.pexels.com/photos/5240511/pexels-photo-5240511.jpeg?auto=compress&cs=tinysrgb&w=1600&h=2000&fit=crop';
 const INSTAGRAM_URL = 'https://www.instagram.com/__primeiraclasse/';
 
 export function Hero() {
   return (
     <section id="inicio" className="relative min-h-screen flex items-center bg-creme-50 pt-24 pb-16 overflow-hidden">
-      <div className="absolute top-28 -left-24 w-72 h-72 rounded-full bg-sky-100/40 blur-3xl" />
-      <div className="absolute bottom-10 right-0 w-80 h-80 rounded-full bg-rose-100/30 blur-3xl" />
+      <div className="absolute top-28 -left-24 w-72 h-72 rounded-full bg-sky-100/50 blur-3xl" />
+      <div className="absolute bottom-10 right-0 w-80 h-80 rounded-full bg-rose-100/40 blur-3xl" />
 
       <div className="max-w-[1400px] mx-auto w-full px-6 md:px-10 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -60,15 +61,18 @@ export function Hero() {
 
           <div className="lg:col-span-7 order-1 lg:order-2 relative">
             <div className="absolute -inset-3 border border-sky-100 rounded-[2px] -z-10 translate-x-3 translate-y-3" />
-            <div className="relative overflow-hidden rounded-[2px] aspect-[4/5] lg:aspect-[3/4] shadow-2xl shadow-ink-900/10">
+            <div className="relative overflow-hidden rounded-[2px] aspect-[4/5] lg:aspect-[3/4] shadow-2xl shadow-ink-900/10 bg-sky-50">
               <img
                 src={HERO_IMAGE}
-                alt="Crianças vestindo moda da Primeira Classe Kids em estilo náutico"
-                className="w-full h-full object-cover animate-slow-zoom"
+                alt="Crianças em ensaio de moda infantil"
+                className="w-full h-full object-cover animate-slow-zoom saturate-[1.12] contrast-[1.04] brightness-[1.02]"
                 loading="eager"
                 fetchPriority="high"
+                onError={(event) => {
+                  event.currentTarget.src = HERO_FALLBACK;
+                }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink-900/20 via-transparent to-creme-50/5" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink-900/15 via-transparent to-white/5 pointer-events-none" />
               <a
                 href={INSTAGRAM_URL}
                 target="_blank"
