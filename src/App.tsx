@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { IntroAnimation } from './components/IntroAnimation';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Founders } from './components/Founders';
@@ -13,29 +12,27 @@ import { Footer } from './components/Footer';
 import { useScrollReveal } from './hooks/useScrollReveal';
 
 function App() {
-  const [introComplete, setIntroComplete] = useState(false);
-  const handleIntroComplete = useCallback(() => setIntroComplete(true), []);
+  const [ready, setReady] = useState(false);
 
   useScrollReveal();
 
+  useCallback(() => setReady(true), []);
+
   return (
-    <>
-      {!introComplete && <IntroAnimation onComplete={handleIntroComplete} />}
-      <div className={introComplete ? 'animate-fade-in' : 'opacity-0'}>
-        <Header />
-        <main>
-          <Hero />
-          <Founders />
-          <Editorial />
-          <Collections />
-          <Picks />
-          <Gallery />
-          <Emotional />
-          <FinalCTA />
-        </main>
-        <Footer />
-      </div>
-    </>
+    <div className={ready ? 'animate-fade-in' : 'animate-fade-in'}>
+      <Header />
+      <main>
+        <Hero />
+        <Founders />
+        <Editorial />
+        <Collections />
+        <Picks />
+        <Gallery />
+        <Emotional />
+        <FinalCTA />
+      </main>
+      <Footer />
+    </div>
   );
 }
 
