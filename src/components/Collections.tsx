@@ -4,25 +4,25 @@ const COLLECTIONS = [
   {
     name: 'Meninas',
     description: 'Vestidos, conjuntos e peças cheias de delicadeza para acompanhar cada descoberta.',
-    image: 'https://images.pexels.com/photos/31482587/pexels-photo-31482587.jpeg?auto=compress&cs=tinysrgb&w=1000',
+    image: 'https://images.pexels.com/photos/4715329/pexels-photo-4715329.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     accent: 'rose',
   },
   {
     name: 'Meninos',
     description: 'Estilo e conforto para os pequenos aventureiros que vivem cada momento com intensidade.',
-    image: 'https://images.pexels.com/photos/30690921/pexels-photo-30690921.jpeg?auto=compress&cs=tinysrgb&w=1000',
+    image: 'https://images.pexels.com/photos/6612634/pexels-photo-6612634.jpeg?auto=compress&cs=tinysrgb&w=1000',
     accent: 'sky',
   },
   {
     name: 'Bebês',
     description: 'Pele delicada, tecidos suaves e o carinho que os primeiros dias merecem.',
-    image: 'https://images.pexels.com/photos/32890747/pexels-photo-32890747.jpeg?auto=compress&cs=tinysrgb&w=1000',
+    image: 'https://images.pexels.com/photos/36039/baby-twins-brother-and-sister-one-hundred-days.jpg?auto=compress&cs=tinysrgb&w=1000',
     accent: 'sky',
   },
   {
     name: 'Novidades',
     description: 'As últimas chegadas, peças selecionadas para a nova estação da Primeira Classe.',
-    image: 'https://images.pexels.com/photos/17556667/pexels-photo-17556667.jpeg?auto=compress&cs=tinysrgb&w=1000',
+    image: 'https://images.pexels.com/photos/6871798/pexels-photo-6871798.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
     accent: 'rose',
   },
 ];
