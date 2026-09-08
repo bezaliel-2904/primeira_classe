@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Founders } from './components/Founders';
@@ -12,14 +11,10 @@ import { Footer } from './components/Footer';
 import { useScrollReveal } from './hooks/useScrollReveal';
 
 function App() {
-  const [ready, setReady] = useState(false);
-
   useScrollReveal();
 
-  useCallback(() => setReady(true), []);
-
   return (
-    <div className={ready ? 'animate-fade-in' : 'animate-fade-in'}>
+    <div className="animate-fade-in">
       <Header />
       <main>
         <Hero />
