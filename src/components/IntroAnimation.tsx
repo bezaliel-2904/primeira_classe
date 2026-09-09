@@ -7,6 +7,8 @@ interface IntroAnimationProps {
 const INTRO_DURATION = 7000;
 const FLIGHT_DURATION = 5700;
 
+const ROUTE_PATH = 'M -90 505 C 70 115, 255 95, 425 330 C 520 462, 685 458, 685 285 C 685 135, 500 135, 500 285 C 500 452, 740 470, 900 275 C 1000 150, 1110 165, 1290 220';
+
 export function IntroAnimation({ onComplete }: IntroAnimationProps) {
   const [phase, setPhase] = useState<'flight' | 'split' | 'done'>('flight');
 
@@ -42,7 +44,6 @@ export function IntroAnimation({ onComplete }: IntroAnimationProps) {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_25%,rgba(215,229,235,0.28),transparent_25%)]" />
 
       <div className="absolute inset-0 flex items-center justify-center px-6">
-        {/* Os painéis só cobrem o conteúdo até o momento da abertura. Rota e avião ficam acima deles. */}
         <div
           className={`pointer-events-none absolute inset-x-0 top-0 z-10 h-1/2 bg-[#EFE5D5] transition-transform duration-[1100ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
             phase === 'split' || phase === 'done' ? '-translate-y-full' : 'translate-y-0'
@@ -73,22 +74,35 @@ export function IntroAnimation({ onComplete }: IntroAnimationProps) {
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
+
+            {/* A máscara revela a rota progressivamente, exatamente atrás do avião. */}
+            <mask id="routeRevealMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="700">
+              <path
+                d={ROUTE_PATH}
+                pathLength="1000"
+                stroke="white"
+                strokeWidth="34"
+                strokeLinecap="round"
+                fill="none"
+                className="pc-route-mask"
+              />
+            </mask>
           </defs>
 
-          {/* Tracejado que acompanha a volta do avião e atravessa toda a tela. */}
+          {/* A rota só existe onde o avião já passou; ela é desenhada progressivamente durante o voo. */}
           <path
-            d="M -90 505 C 70 115, 255 95, 425 330 C 520 462, 685 458, 685 285 C 685 135, 500 135, 500 285 C 500 452, 740 470, 900 275 C 1000 150, 1110 165, 1290 220"
+            d={ROUTE_PATH}
             stroke="#79A5BA"
             strokeWidth="2.4"
             strokeDasharray="3 10"
             strokeLinecap="round"
             opacity="0.95"
             filter="url(#routeGlow)"
+            mask="url(#routeRevealMask)"
             className="pc-route"
           />
         </svg>
 
-        {/* Avião inspirado no pequeno avião rosa da identidade da foto de perfil. */}
         <div
           className={`pc-airplane-html ${phase === 'split' || phase === 'done' ? 'pc-airplane-finished' : ''}`}
           aria-hidden="true"
