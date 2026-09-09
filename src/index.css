@@ -31,7 +31,7 @@
     stroke-linecap: round;
   }
 
-  /* Avião da abertura: animação independente do SVG para funcionar de forma consistente. */
+  /* Avião da abertura: o avião percorre a rota inteira durante a abertura. */
   .pc-airplane-html {
     position: absolute;
     z-index: 30;
@@ -57,9 +57,15 @@
     animation: pc-plane-flight 5.7s cubic-bezier(0.42, 0, 0.18, 1) 0.15s forwards, pc-plane-fade 500ms ease-out 5.65s forwards;
   }
 
-  /* O tracejado acompanha visualmente o voo, sem depender de animateMotion. */
+  /* O tracejado nasce exatamente no ponto onde o avião começa e vai sendo revelado atrás dele. */
+  .pc-route-mask {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: pc-route-reveal 5.7s cubic-bezier(0.42, 0, 0.18, 1) 0.15s forwards;
+  }
+
   .pc-route {
-    animation: pc-route-flow 5.7s linear 0.15s forwards;
+    opacity: 0.95;
   }
 
   .pc-split-line {
@@ -71,10 +77,13 @@
     opacity: 0;
   }
 
-  @keyframes pc-route-flow {
-    from { stroke-dashoffset: 0; opacity: 0.35; }
-    12% { opacity: 0.95; }
-    to { stroke-dashoffset: -48; opacity: 0.95; }
+  @keyframes pc-route-reveal {
+    0% {
+      stroke-dashoffset: 1000;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
   }
 
   @keyframes pc-plane-flight {
@@ -96,7 +105,6 @@
       transform: translate(44vw, 47vh) rotate(30deg) scale(1.04);
     }
     50% {
-      /* entra na volta */
       transform: translate(56vw, 42vh) rotate(-2deg) scale(1.04);
     }
     58% {
@@ -106,7 +114,6 @@
       transform: translate(53vw, 14vh) rotate(-105deg) scale(1.04);
     }
     72% {
-      /* completa a volta e retorna ao centro */
       transform: translate(43vw, 25vh) rotate(-160deg) scale(1.04);
     }
     79% {
