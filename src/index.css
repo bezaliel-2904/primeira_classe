@@ -31,26 +31,31 @@
     stroke-linecap: round;
   }
 
-  /* O avião agora vive dentro do mesmo SVG da rota: o percurso é único e exato. */
+  /* O avião está dentro do mesmo SVG da rota. Não há keyframes separados. */
   .pc-airplane-svg {
-    opacity: 1;
+    opacity: 0;
     transform-origin: center;
-    filter: drop-shadow(0 5px 8px rgba(112, 139, 151, 0.18));
+    filter: drop-shadow(0 4px 8px rgba(102, 135, 154, 0.2));
+    animation: pc-plane-visible 5600ms ease-out 0ms forwards;
   }
 
+  /* O rastro é revelado do início ao fim durante exatamente o mesmo voo. */
   .pc-route-mask {
     stroke-dasharray: 1000;
     stroke-dashoffset: 1000;
-    animation: pc-route-reveal 5.7s cubic-bezier(0.42, 0, 0.18, 1) 0.15s forwards;
+    animation: pc-route-reveal 5600ms linear 0ms forwards;
+  }
+
+  @keyframes pc-plane-visible {
+    0% { opacity: 0; }
+    4% { opacity: 1; }
+    96% { opacity: 1; }
+    100% { opacity: 0; }
   }
 
   @keyframes pc-route-reveal {
-    0% {
-      stroke-dashoffset: 1000;
-    }
-    100% {
-      stroke-dashoffset: 0;
-    }
+    from { stroke-dashoffset: 1000; }
+    to { stroke-dashoffset: 0; }
   }
 
   .reveal {
