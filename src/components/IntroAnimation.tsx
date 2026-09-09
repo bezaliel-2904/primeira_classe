@@ -71,16 +71,15 @@ export function IntroAnimation({ onComplete }: IntroAnimationProps) {
             </filter>
           </defs>
 
-          {/* O trace começa fora da tela, faz uma volta elegante no centro e termina fora da tela. */}
+          {/* Rota pontilhada: atravessa a tela, faz uma volta no centro e sai pelo outro lado. */}
           <path
             d="M -90 505 C 70 115, 255 95, 425 330 C 520 462, 685 458, 685 285 C 685 135, 500 135, 500 285 C 500 452, 740 470, 900 275 C 1000 150, 1110 165, 1290 220"
-            pathLength="1"
             stroke="#79A5BA"
             strokeWidth="2.4"
             strokeDasharray="3 10"
             strokeLinecap="round"
+            opacity="0.92"
             filter="url(#routeGlow)"
-            className="pc-route"
           />
 
           <path
@@ -91,17 +90,17 @@ export function IntroAnimation({ onComplete }: IntroAnimationProps) {
             strokeLinecap="round"
             className={`pc-split-line ${phase === 'split' || phase === 'done' ? 'pc-split-line-open' : ''}`}
           />
-
-          {/* Avião inspirado no pequeno avião rosa da foto de perfil enviada. */}
-          <g className="pc-airplane">
-            <g transform="translate(-34 -30) scale(.62)">
-              <path d="M14 49 C25 45 36 43 48 42 L74 27 C78 25 83 27 84 30 C85 33 83 36 79 38 L57 48 L79 54 C83 55 85 58 83 61 C81 64 77 64 73 62 L49 53 C36 56 25 56 15 54 C11 53 10 51 14 49 Z" fill="#E59EAD" />
-              <path d="M48 42 L38 25 C36 22 38 19 42 20 L58 27 L74 27 L57 48 Z" fill="#E59EAD" opacity=".95" />
-              <path d="M48 42 L58 27 L66 30 L57 48 Z" fill="#D98599" opacity=".72" />
-              <path d="M49 53 L40 68 C38 71 34 70 34 66 L36 55 Z" fill="#D98599" opacity=".82" />
-            </g>
-          </g>
         </svg>
+
+        {/* Avião inspirado diretamente no pequeno avião rosa da foto de perfil enviada. */}
+        <div className="pc-airplane-html" aria-hidden="true">
+          <svg viewBox="0 0 100 100" width="58" height="58" fill="none">
+            <path d="M14 49 C25 45 36 43 48 42 L74 27 C78 25 83 27 84 30 C85 33 83 36 79 38 L57 48 L79 54 C83 55 85 58 83 61 C81 64 77 64 73 62 L49 53 C36 56 25 56 15 54 C11 53 10 51 14 49 Z" fill="#E59EAD" />
+            <path d="M48 42 L38 25 C36 22 38 19 42 20 L58 27 L74 27 L57 48 Z" fill="#E59EAD" opacity=".95" />
+            <path d="M48 42 L58 27 L66 30 L57 48 Z" fill="#D98599" opacity=".72" />
+            <path d="M49 53 L40 68 C38 71 34 70 34 66 L36 55 Z" fill="#D98599" opacity=".82" />
+          </svg>
+        </div>
 
         <div className="absolute bottom-9 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 whitespace-nowrap">
           <span className="h-px w-8 bg-sky-300/70" />
