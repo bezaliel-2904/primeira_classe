@@ -31,24 +31,35 @@
     stroke-linecap: round;
   }
 
-  /* A aeronave fica em HTML/CSS para não depender de animateMotion do SVG. */
+  /* Avião da abertura: animação independente do SVG para funcionar de forma consistente. */
   .pc-airplane-html {
     position: absolute;
-    z-index: 20;
+    z-index: 30;
     left: 0;
     top: 0;
     width: 58px;
     height: 58px;
     opacity: 0;
     pointer-events: none;
-    filter: drop-shadow(0 5px 9px rgba(112, 139, 151, 0.14));
-    animation: pc-plane-flight 5s cubic-bezier(0.45, 0.05, 0.2, 1) 0.15s forwards;
+    transform-origin: center center;
+    filter: drop-shadow(0 5px 9px rgba(112, 139, 151, 0.16));
+    animation: pc-plane-flight 5.7s cubic-bezier(0.42, 0, 0.18, 1) 0.15s forwards;
   }
 
   .pc-airplane-html svg {
     display: block;
     width: 100%;
     height: 100%;
+    overflow: visible;
+  }
+
+  .pc-airplane-finished {
+    animation: pc-plane-flight 5.7s cubic-bezier(0.42, 0, 0.18, 1) 0.15s forwards, pc-plane-fade 500ms ease-out 5.65s forwards;
+  }
+
+  /* O tracejado acompanha visualmente o voo, sem depender de animateMotion. */
+  .pc-route {
+    animation: pc-route-flow 5.7s linear 0.15s forwards;
   }
 
   .pc-split-line {
@@ -60,48 +71,61 @@
     opacity: 0;
   }
 
+  @keyframes pc-route-flow {
+    from { stroke-dashoffset: 0; opacity: 0.35; }
+    12% { opacity: 0.95; }
+    to { stroke-dashoffset: -48; opacity: 0.95; }
+  }
+
   @keyframes pc-plane-flight {
     0% {
       opacity: 0;
-      transform: translate(-70px, 58vh) rotate(-22deg) scale(0.72);
+      transform: translate(-70px, 58vh) rotate(-25deg) scale(0.72);
     }
-    7% {
+    6% {
       opacity: 1;
-      transform: translate(7vw, 35vh) rotate(-18deg) scale(0.9);
+      transform: translate(6vw, 38vh) rotate(-18deg) scale(0.9);
     }
-    18% {
-      transform: translate(17vw, 17vh) rotate(-8deg) scale(1);
+    17% {
+      transform: translate(17vw, 18vh) rotate(-8deg) scale(1);
     }
-    30% {
-      transform: translate(32vw, 39vh) rotate(15deg) scale(1.02);
+    29% {
+      transform: translate(31vw, 35vh) rotate(12deg) scale(1.02);
     }
-    42% {
-      transform: translate(43vw, 47vh) rotate(35deg) scale(1.04);
+    40% {
+      transform: translate(44vw, 47vh) rotate(30deg) scale(1.04);
     }
     50% {
-      /* primeira metade da volta */
-      transform: translate(57vw, 40vh) rotate(-10deg) scale(1.04);
+      /* entra na volta */
+      transform: translate(56vw, 42vh) rotate(-2deg) scale(1.04);
     }
     58% {
-      transform: translate(55vw, 23vh) rotate(-55deg) scale(1.04);
+      transform: translate(61vw, 25vh) rotate(-55deg) scale(1.04);
     }
-    66% {
-      /* fecha a volta e cruza novamente o centro */
-      transform: translate(45vw, 20vh) rotate(-120deg) scale(1.04);
+    65% {
+      transform: translate(53vw, 14vh) rotate(-105deg) scale(1.04);
     }
-    74% {
-      transform: translate(41vw, 39vh) rotate(-165deg) scale(1.04);
+    72% {
+      /* completa a volta e retorna ao centro */
+      transform: translate(43vw, 25vh) rotate(-160deg) scale(1.04);
     }
-    82% {
-      transform: translate(59vw, 52vh) rotate(-18deg) scale(1.04);
+    79% {
+      transform: translate(47vw, 43vh) rotate(-205deg) scale(1.04);
     }
-    91% {
-      transform: translate(79vw, 34vh) rotate(-12deg) scale(1);
+    87% {
+      transform: translate(65vw, 48vh) rotate(-18deg) scale(1.02);
+    }
+    94% {
+      transform: translate(84vw, 30vh) rotate(-10deg) scale(1);
     }
     100% {
       opacity: 1;
-      transform: translate(108vw, 19vh) rotate(-7deg) scale(0.96);
+      transform: translate(108vw, 16vh) rotate(-7deg) scale(0.96);
     }
+  }
+
+  @keyframes pc-plane-fade {
+    to { opacity: 0; }
   }
 
   /* Content must never depend on an animation to become visible. */
