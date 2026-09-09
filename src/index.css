@@ -31,7 +31,6 @@
     stroke-linecap: round;
   }
 
-  /* O avião está dentro do mesmo SVG da rota. Não há keyframes separados. */
   .pc-airplane-svg {
     opacity: 0;
     transform-origin: center;
@@ -39,7 +38,6 @@
     animation: pc-plane-visible 5600ms ease-out 0ms forwards;
   }
 
-  /* O rastro é revelado do início ao fim durante exatamente o mesmo voo. */
   .pc-route-mask {
     stroke-dasharray: 1000;
     stroke-dashoffset: 1000;
@@ -92,6 +90,20 @@
     width: 40px;
     height: 1px;
     background: #BFD5E2;
+  }
+}
+
+/* Ajustes específicos para telas pequenas: a entrada ocupa a viewport real do celular e evita cortes. */
+@media (max-width: 640px) {
+  .pc-airplane-svg {
+    filter: drop-shadow(0 3px 6px rgba(102, 135, 154, 0.18));
+  }
+}
+
+@media (max-width: 380px) {
+  .premium-divider::before,
+  .premium-divider::after {
+    width: 28px;
   }
 }
 
