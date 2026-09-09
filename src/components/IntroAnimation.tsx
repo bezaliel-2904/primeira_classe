@@ -4,56 +4,55 @@ interface IntroAnimationProps {
   onComplete: () => void;
 }
 
-const FLIGHT_DURATION = 5600;
-const OPEN_DURATION = 1250;
-const INTRO_DURATION = FLIGHT_DURATION + OPEN_DURATION + 500;
+const INTRO_DURATION = 7600;
+const FLIGHT_DURATION = 5700;
 
-// Um único caminho controla tanto o avião quanto o rastro.
-const ROUTE_PATH = 'M -80 535 C 75 135, 255 105, 420 315 C 520 440, 665 455, 690 300 C 715 145, 520 115, 505 275 C 490 425, 690 485, 875 320 C 995 215, 1110 175, 1280 215';
+const ROUTE_PATH = 'M -90 505 C 70 115, 255 95, 425 330 C 520 462, 685 458, 685 285 C 685 135, 500 135, 500 285 C 500 452, 740 470, 900 275 C 1000 150, 1110 165, 1290 220';
 
 export function IntroAnimation({ onComplete }: IntroAnimationProps) {
-  const [phase, setPhase] = useState<'flight' | 'opening' | 'done'>('flight');
+  const [phase, setPhase] = useState<'flight' | 'split' | 'done'>('flight');
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reducedMotion) {
-      const timer = window.setTimeout(onComplete, 500);
+      const timer = window.setTimeout(onComplete, 700);
       return () => window.clearTimeout(timer);
     }
 
-    const openTimer = window.setTimeout(() => setPhase('opening'), FLIGHT_DURATION);
+    const splitTimer = window.setTimeout(() => setPhase('split'), FLIGHT_DURATION);
     const finishTimer = window.setTimeout(() => {
       setPhase('done');
       onComplete();
     }, INTRO_DURATION);
 
     return () => {
-      window.clearTimeout(openTimer);
+      window.clearTimeout(splitTimer);
       window.clearTimeout(finishTimer);
     };
   }, [onComplete]);
 
-  const isOpening = phase === 'opening' || phase === 'done';
+  const isOpening = phase === 'split' || phase === 'done';
 
   return (
     <div
-      className={`fixed inset-0 z-[100] overflow-hidden bg-[#EFE5D5] transition-opacity duration-500 ${
+      className={`fixed inset-0 z-[100] overflow-hidden bg-[#EFE5D5] transition-opacity duration-700 ${
         phase === 'done' ? 'pointer-events-none opacity-0' : 'opacity-100'
       }`}
       aria-label="Primeira Classe Kids"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(226,238,243,0.72),transparent_36%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_78%,rgba(238,205,207,0.24),transparent_30%)]" />
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_42%,rgba(226,238,243,0.62),transparent_34%)]" />
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_15%_75%,rgba(238,205,207,0.22),transparent_28%)]" />
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_85%_25%,rgba(215,229,235,0.28),transparent_25%)]" />
 
-      {/* A abertura acontece somente depois que o avião termina o percurso. */}
+      {/* As portas ficam atrás do voo. Só sobem/descem no final, sem bloquear avião ou rastro. */}
       <div
-        className={`pointer-events-none absolute inset-x-0 top-0 z-50 h-1/2 bg-[#EFE5D5] transition-transform duration-[1250ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
+        className={`pointer-events-none absolute inset-x-0 top-0 z-20 h-1/2 bg-[#EFE5D5] transition-transform duration-[1100ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
           isOpening ? '-translate-y-full' : 'translate-y-0'
         }`}
       />
       <div
-        className={`pointer-events-none absolute inset-x-0 bottom-0 z-50 h-1/2 bg-[#EFE5D5] transition-transform duration-[1250ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
+        className={`pointer-events-none absolute inset-x-0 bottom-0 z-20 h-1/2 bg-[#EFE5D5] transition-transform duration-[1100ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
           isOpening ? 'translate-y-full' : 'translate-y-0'
         }`}
       />
@@ -66,62 +65,58 @@ export function IntroAnimation({ onComplete }: IntroAnimationProps) {
         aria-hidden="true"
       >
         <defs>
-          <filter id="pcRouteGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="0.7" result="blur" />
+          <filter id="routeGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="0.9" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
 
-          {/* O mask começa totalmente fechada e abre na mesma duração do voo. */}
-          <mask id="pcRouteMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="700" mask-type="luminance">
+          <mask id="routeRevealMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="700" mask-type="luminance">
             <rect x="0" y="0" width="1200" height="700" fill="black" />
             <path
               d={ROUTE_PATH}
               pathLength="1000"
               stroke="white"
-              strokeWidth="38"
+              strokeWidth="34"
               strokeLinecap="round"
               fill="none"
               className="pc-route-mask"
             />
           </mask>
-
-          <path id="pcFlightPath" d={ROUTE_PATH} pathLength="1000" fill="none" />
         </defs>
 
-        {/* O rastro não existe pronto: somente a parte já percorrida pelo avião é revelada. */}
         <path
           d={ROUTE_PATH}
           pathLength="1000"
-          stroke="#729CAF"
+          stroke="#79A5BA"
           strokeWidth="2.5"
-          strokeDasharray="2.5 10"
+          strokeDasharray="3 10"
           strokeLinecap="round"
           opacity="0.95"
-          filter="url(#pcRouteGlow)"
-          mask="url(#pcRouteMask)"
+          filter="url(#routeGlow)"
+          mask="url(#routeRevealMask)"
         />
 
-        {/* Avião de papel elegante. Ele usa EXATAMENTE o mesmo path do rastro. */}
         <g className="pc-airplane-svg">
-          <g transform="translate(-25 -25) scale(0.5)">
-            <path d="M9 48.5 L92 8 L63 92 L43 59 L9 48.5 Z" fill="#FCFDFD" stroke="#66879A" strokeWidth="2.8" strokeLinejoin="round" />
-            <path d="M9 48.5 L92 8 L43 59 L9 48.5 Z" fill="#E9F1F5" stroke="#66879A" strokeWidth="2.8" strokeLinejoin="round" />
-            <path d="M43 59 L92 8 L63 92 L43 59 Z" fill="#D6E5EB" stroke="#66879A" strokeWidth="2.8" strokeLinejoin="round" />
-            <path d="M43 59 L63 92" stroke="#A0B8C4" strokeWidth="2" strokeLinecap="round" />
+          <g transform="translate(-30 -30) scale(0.60)">
+            <path d="M12 49.5 91 9 64 91 46 59 12 49.5Z" fill="#F9FBFC" stroke="#6D8FA3" strokeWidth="2.5" strokeLinejoin="round" />
+            <path d="M12 49.5 91 9 46 59 12 49.5Z" fill="#E7F0F4" stroke="#6D8FA3" strokeWidth="2.5" strokeLinejoin="round" />
+            <path d="M46 59 91 9 64 91 46 59Z" fill="#D4E3EA" stroke="#6D8FA3" strokeWidth="2.5" strokeLinejoin="round" />
+            <path d="M46 59 64 91" stroke="#9CB5C3" strokeWidth="2" strokeLinecap="round" />
           </g>
-          <animateMotion dur="5.6s" begin="0s" fill="freeze" rotate="auto">
-            <mpath href="#pcFlightPath" />
+          <animateMotion dur="5.7s" begin="0.15s" fill="freeze" rotate="auto">
+            <mpath href="#flightPath" />
           </animateMotion>
         </g>
+
+        <path id="flightPath" d={ROUTE_PATH} pathLength="1000" fill="none" opacity="0" />
       </svg>
 
-      {/* O nome fica completamente fora da cena durante o voo. Só aparece depois da abertura. */}
       <div
-        className={`absolute inset-0 z-[70] flex items-center justify-center px-6 text-center transition-all duration-700 ease-out ${
-          isOpening ? 'translate-y-0 opacity-100 delay-[850ms]' : 'translate-y-4 opacity-0'
+        className={`absolute inset-0 z-[70] flex items-center justify-center px-6 text-center transition-all duration-[900ms] ease-out ${
+          isOpening ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
         }`}
         aria-hidden={!isOpening}
       >
