@@ -9,7 +9,8 @@
   }
 
   body {
-    @apply bg-creme-50 text-ink-800 font-sans antialiased;
+    @apply text-ink-800 font-sans antialiased;
+    background: #F2E9DC;
     overflow-x: hidden;
   }
 
@@ -30,34 +31,77 @@
     stroke-linecap: round;
   }
 
-  .pc-route {
-    stroke-dashoffset: 1;
-    animation: pc-route-draw 3.9s cubic-bezier(0.65, 0, 0.35, 1) 0.25s forwards;
+  /* A aeronave fica em HTML/CSS para não depender de animateMotion do SVG. */
+  .pc-airplane-html {
+    position: absolute;
+    z-index: 20;
+    left: 0;
+    top: 0;
+    width: 58px;
+    height: 58px;
+    opacity: 0;
+    pointer-events: none;
+    filter: drop-shadow(0 5px 9px rgba(112, 139, 151, 0.14));
+    animation: pc-plane-flight 5s cubic-bezier(0.45, 0.05, 0.2, 1) 0.15s forwards;
   }
 
-  .pc-airplane {
-    opacity: 0;
-    animation: pc-plane-appear 0.35s ease-out 0.25s forwards;
+  .pc-airplane-html svg {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 
   .pc-split-line {
     opacity: 0.9;
-    transform-origin: center;
-    transition: opacity 500ms ease;
+    transition: opacity 450ms ease;
   }
 
   .pc-split-line-open {
     opacity: 0;
   }
 
-  @keyframes pc-route-draw {
-    from { stroke-dashoffset: 1; }
-    to { stroke-dashoffset: 0; }
-  }
-
-  @keyframes pc-plane-appear {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  @keyframes pc-plane-flight {
+    0% {
+      opacity: 0;
+      transform: translate(-70px, 58vh) rotate(-22deg) scale(0.72);
+    }
+    7% {
+      opacity: 1;
+      transform: translate(7vw, 35vh) rotate(-18deg) scale(0.9);
+    }
+    18% {
+      transform: translate(17vw, 17vh) rotate(-8deg) scale(1);
+    }
+    30% {
+      transform: translate(32vw, 39vh) rotate(15deg) scale(1.02);
+    }
+    42% {
+      transform: translate(43vw, 47vh) rotate(35deg) scale(1.04);
+    }
+    50% {
+      /* primeira metade da volta */
+      transform: translate(57vw, 40vh) rotate(-10deg) scale(1.04);
+    }
+    58% {
+      transform: translate(55vw, 23vh) rotate(-55deg) scale(1.04);
+    }
+    66% {
+      /* fecha a volta e cruza novamente o centro */
+      transform: translate(45vw, 20vh) rotate(-120deg) scale(1.04);
+    }
+    74% {
+      transform: translate(41vw, 39vh) rotate(-165deg) scale(1.04);
+    }
+    82% {
+      transform: translate(59vw, 52vh) rotate(-18deg) scale(1.04);
+    }
+    91% {
+      transform: translate(79vw, 34vh) rotate(-12deg) scale(1);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(108vw, 19vh) rotate(-7deg) scale(0.96);
+    }
   }
 
   /* Content must never depend on an animation to become visible. */
@@ -111,6 +155,6 @@
 }
 
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #F4EFE6; }
+::-webkit-scrollbar-track { background: #F2E9DC; }
 ::-webkit-scrollbar-thumb { background: #D0E0EA; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #A8C5D6; }
