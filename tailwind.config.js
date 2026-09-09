@@ -5,12 +5,12 @@ export default {
     extend: {
       colors: {
         creme: {
-          50: '#FDFBF7',
-          100: '#FAF7F2',
-          200: '#F5F0E8',
-          300: '#EDE5D8',
-          400: '#E0D5C2',
-          500: '#D0C3A8',
+          50: '#F2E9DC',
+          100: '#EEE4D5',
+          200: '#E8DCCB',
+          300: '#E0D1BD',
+          400: '#D3C1A5',
+          500: '#C5B18F',
         },
         sky: {
           50: '#F0F6FA',
