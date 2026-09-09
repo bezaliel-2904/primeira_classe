@@ -31,50 +31,17 @@
     stroke-linecap: round;
   }
 
-  /* Avião da abertura: o avião percorre a rota inteira durante a abertura. */
-  .pc-airplane-html {
-    position: absolute;
-    z-index: 30;
-    left: 0;
-    top: 0;
-    width: 58px;
-    height: 58px;
-    opacity: 0;
-    pointer-events: none;
-    transform-origin: center center;
-    filter: drop-shadow(0 5px 9px rgba(112, 139, 151, 0.16));
-    animation: pc-plane-flight 5.7s cubic-bezier(0.42, 0, 0.18, 1) 0.15s forwards;
+  /* O avião agora vive dentro do mesmo SVG da rota: o percurso é único e exato. */
+  .pc-airplane-svg {
+    opacity: 1;
+    transform-origin: center;
+    filter: drop-shadow(0 5px 8px rgba(112, 139, 151, 0.18));
   }
 
-  .pc-airplane-html svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-
-  .pc-airplane-finished {
-    animation: pc-plane-flight 5.7s cubic-bezier(0.42, 0, 0.18, 1) 0.15s forwards, pc-plane-fade 500ms ease-out 5.65s forwards;
-  }
-
-  /* O tracejado nasce exatamente no ponto onde o avião começa e vai sendo revelado atrás dele. */
   .pc-route-mask {
     stroke-dasharray: 1000;
     stroke-dashoffset: 1000;
     animation: pc-route-reveal 5.7s cubic-bezier(0.42, 0, 0.18, 1) 0.15s forwards;
-  }
-
-  .pc-route {
-    opacity: 0.95;
-  }
-
-  .pc-split-line {
-    opacity: 0.9;
-    transition: opacity 450ms ease;
-  }
-
-  .pc-split-line-open {
-    opacity: 0;
   }
 
   @keyframes pc-route-reveal {
@@ -86,56 +53,6 @@
     }
   }
 
-  @keyframes pc-plane-flight {
-    0% {
-      opacity: 0;
-      transform: translate(-70px, 58vh) rotate(-25deg) scale(0.72);
-    }
-    6% {
-      opacity: 1;
-      transform: translate(6vw, 38vh) rotate(-18deg) scale(0.9);
-    }
-    17% {
-      transform: translate(17vw, 18vh) rotate(-8deg) scale(1);
-    }
-    29% {
-      transform: translate(31vw, 35vh) rotate(12deg) scale(1.02);
-    }
-    40% {
-      transform: translate(44vw, 47vh) rotate(30deg) scale(1.04);
-    }
-    50% {
-      transform: translate(56vw, 42vh) rotate(-2deg) scale(1.04);
-    }
-    58% {
-      transform: translate(61vw, 25vh) rotate(-55deg) scale(1.04);
-    }
-    65% {
-      transform: translate(53vw, 14vh) rotate(-105deg) scale(1.04);
-    }
-    72% {
-      transform: translate(43vw, 25vh) rotate(-160deg) scale(1.04);
-    }
-    79% {
-      transform: translate(47vw, 43vh) rotate(-205deg) scale(1.04);
-    }
-    87% {
-      transform: translate(65vw, 48vh) rotate(-18deg) scale(1.02);
-    }
-    94% {
-      transform: translate(84vw, 30vh) rotate(-10deg) scale(1);
-    }
-    100% {
-      opacity: 1;
-      transform: translate(108vw, 16vh) rotate(-7deg) scale(0.96);
-    }
-  }
-
-  @keyframes pc-plane-fade {
-    to { opacity: 0; }
-  }
-
-  /* Content must never depend on an animation to become visible. */
   .reveal {
     opacity: 1;
     transform: none;
@@ -152,7 +69,6 @@
   .reveal-delay-3 { transition-delay: 0.45s; }
   .reveal-delay-4 { transition-delay: 0.6s; }
 
-  /* Never hide an image while waiting for IntersectionObserver. */
   .image-reveal,
   .image-reveal.is-visible {
     clip-path: none;
