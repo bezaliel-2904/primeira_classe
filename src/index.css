@@ -26,10 +26,13 @@
 @layer utilities {
   .text-balance { text-wrap: balance; }
 
-  /* A abertura é uma camada independente para o navegador não precisar recompor a página inteira a cada frame. */
   .pc-intro-layer {
     contain: paint;
     isolation: isolate;
+  }
+
+  .pc-flight-mobile {
+    display: none;
   }
 
   .dotted-trail {
@@ -100,11 +103,20 @@
   }
 }
 
-/* Não renderiza com a mesma prioridade as seções que estão muito abaixo da primeira tela. */
 main > section:not(:first-child),
 footer {
   content-visibility: auto;
   contain-intrinsic-size: 900px;
+}
+
+@media (max-width: 640px) {
+  .pc-flight-desktop {
+    display: none;
+  }
+
+  .pc-flight-mobile {
+    display: block;
+  }
 }
 
 @media (max-width: 380px) {
