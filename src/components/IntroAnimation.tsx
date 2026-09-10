@@ -37,7 +37,7 @@ export function IntroAnimation({ onComplete }: IntroAnimationProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] overflow-hidden bg-[#EFE5D5] transition-opacity duration-700 ${phase === 'done' ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+      className={`pc-intro-layer fixed inset-0 z-[100] overflow-hidden bg-[#EFE5D5] transition-opacity duration-700 ${phase === 'done' ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
       aria-label="Primeira Classe Kids"
     >
       <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_42%,rgba(226,238,243,0.62),transparent_34%)]" />
@@ -56,21 +56,13 @@ export function IntroAnimation({ onComplete }: IntroAnimationProps) {
         aria-hidden="true"
       >
         <defs>
-          <filter id="routeGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="0.9" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-
           <mask id="routeRevealMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="700" mask-type="luminance">
             <rect x="0" y="0" width="1200" height="700" fill="black" />
             <path d={ROUTE_PATH} pathLength="1000" stroke="white" strokeWidth="34" strokeLinecap="round" fill="none" className="pc-route-mask" />
           </mask>
         </defs>
 
-        {/* O único caminho visual da animação. */}
+        {/* O único caminho visual da animação. Sem filtro SVG para evitar rasterização pesada no celular. */}
         <path
           d={ROUTE_PATH}
           pathLength="1000"
@@ -79,7 +71,6 @@ export function IntroAnimation({ onComplete }: IntroAnimationProps) {
           strokeDasharray="3 10"
           strokeLinecap="round"
           opacity="0.95"
-          filter="url(#routeGlow)"
           mask="url(#routeRevealMask)"
         />
 
