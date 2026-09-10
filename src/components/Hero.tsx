@@ -28,7 +28,7 @@ export function Hero() {
           <div className="lg:col-span-7 order-1 lg:order-2 relative">
             <div className="absolute -inset-3 border border-sky-100 rounded-[2px] -z-10 translate-x-3 translate-y-3" />
             <div className="relative overflow-hidden rounded-[2px] aspect-[4/5] lg:aspect-[3/4] shadow-2xl shadow-ink-900/10 bg-sky-50">
-              <img src={HERO_IMAGE} alt="Crianças em ensaio de moda infantil com roupas coloridas" className="w-full h-full object-cover animate-slow-zoom saturate-[1.18] contrast-[1.04] brightness-[1.03]" loading="eager" fetchPriority="high" onError={(event) => { if (event.currentTarget.src !== HERO_FALLBACK) event.currentTarget.src = HERO_FALLBACK; }} />
+              <img src={HERO_IMAGE} alt="Crianças em ensaio de moda infantil com roupas coloridas" className="w-full h-full object-cover animate-slow-zoom saturate-[1.18] contrast-[1.04] brightness-[1.03]" loading="eager" fetchPriority="high" decoding="async" onError={(event) => { if (event.currentTarget.src !== HERO_FALLBACK) event.currentTarget.src = HERO_FALLBACK; }} />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-900/20 via-transparent to-white/5 pointer-events-none" />
               <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="absolute bottom-5 right-5 bg-creme-50/90 backdrop-blur-md px-4 py-2.5 rounded-full font-sans text-[11px] text-ink-600 tracking-wide hover:bg-white transition-colors duration-300">@__primeiraclasse</a>
             </div>
