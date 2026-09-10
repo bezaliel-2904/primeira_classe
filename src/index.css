@@ -26,6 +26,12 @@
 @layer utilities {
   .text-balance { text-wrap: balance; }
 
+  /* A abertura é uma camada independente para o navegador não precisar recompor a página inteira a cada frame. */
+  .pc-intro-layer {
+    contain: paint;
+    isolation: isolate;
+  }
+
   .dotted-trail {
     stroke-dasharray: 2 6;
     stroke-linecap: round;
@@ -34,13 +40,14 @@
   .pc-airplane-svg {
     opacity: 0;
     transform-origin: center;
-    filter: drop-shadow(0 4px 8px rgba(102, 135, 154, 0.2));
+    will-change: transform, opacity;
     animation: pc-plane-visible 5600ms ease-out 0ms forwards;
   }
 
   .pc-route-mask {
     stroke-dasharray: 1000;
     stroke-dashoffset: 1000;
+    will-change: stroke-dashoffset;
     animation: pc-route-reveal 5600ms linear 0ms forwards;
   }
 
@@ -93,11 +100,11 @@
   }
 }
 
-/* Ajustes específicos para telas pequenas: a entrada ocupa a viewport real do celular e evita cortes. */
-@media (max-width: 640px) {
-  .pc-airplane-svg {
-    filter: drop-shadow(0 3px 6px rgba(102, 135, 154, 0.18));
-  }
+/* Não renderiza com a mesma prioridade as seções que estão muito abaixo da primeira tela. */
+main > section:not(:first-child),
+footer {
+  content-visibility: auto;
+  contain-intrinsic-size: 900px;
 }
 
 @media (max-width: 380px) {
