@@ -8,7 +8,21 @@ const FLIGHT_DURATION = 5600;
 const OPEN_DURATION = 1250;
 const INTRO_DURATION = FLIGHT_DURATION + OPEN_DURATION + 900;
 
-const ROUTE_PATH = 'M -90 505 C 70 115, 255 95, 425 330 C 520 462, 685 458, 685 285 C 685 135, 500 135, 500 285 C 500 452, 740 470, 900 275 C 1000 150, 1110 165, 1290 220';
+// Rotas independentes por proporção de tela: isso evita que o SVG seja esticado
+// verticalmente no celular, que era o problema visível na abertura.
+const DESKTOP_ROUTE = 'M -90 505 C 70 115, 255 95, 425 330 C 520 462, 685 458, 685 285 C 685 135, 500 135, 500 285 C 500 452, 740 470, 900 275 C 1000 150, 1110 165, 1290 220';
+const MOBILE_ROUTE = 'M -45 650 C 35 385, 105 175, 190 270 C 270 360, 315 470, 275 575 C 245 655, 300 735, 455 625';
+
+function PaperPlane() {
+  return (
+    <g transform="translate(-30 -30) scale(0.60)">
+      <path d="M12 49.5 91 9 64 91 46 59 12 49.5Z" fill="#F9FBFC" stroke="#6D8FA3" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M12 49.5 91 9 46 59 12 49.5Z" fill="#E7F0F4" stroke="#6D8FA3" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M46 59 91 9 64 91 46 59Z" fill="#D4E3EA" stroke="#6D8FA3" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M46 59 64 91" stroke="#9CB5C3" strokeWidth="2" strokeLinecap="round" />
+    </g>
+  );
+}
 
 export function IntroAnimation({ onComplete }: IntroAnimationProps) {
   const [phase, setPhase] = useState<'flight' | 'opening' | 'done'>('flight');
@@ -44,53 +58,58 @@ export function IntroAnimation({ onComplete }: IntroAnimationProps) {
       <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_15%_75%,rgba(238,205,207,0.22),transparent_28%)]" />
       <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_85%_25%,rgba(215,229,235,0.28),transparent_25%)]" />
 
-      {/* As portas cobrem apenas a área da abertura e ficam atrás do avião/rastro. */}
       <div className={`pointer-events-none absolute inset-x-0 top-0 z-20 h-1/2 bg-[#EFE5D5] transition-transform duration-[1250ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${isOpening ? '-translate-y-full' : 'translate-y-0'}`} />
       <div className={`pointer-events-none absolute inset-x-0 bottom-0 z-20 h-1/2 bg-[#EFE5D5] transition-transform duration-[1250ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${isOpening ? 'translate-y-full' : 'translate-y-0'}`} />
 
+      {/* Desktop: mantém a proporção original da rota. */}
       <svg
-        className="absolute inset-0 z-30 h-full w-full"
+        className="pc-flight-svg pc-flight-desktop absolute inset-0 z-30 h-full w-full"
         viewBox="0 0 1200 700"
-        preserveAspectRatio="none"
+        preserveAspectRatio="xMidYMid meet"
         fill="none"
         aria-hidden="true"
       >
         <defs>
-          <mask id="routeRevealMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="700" mask-type="luminance">
+          <mask id="routeRevealDesktop" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="700" mask-type="luminance">
             <rect x="0" y="0" width="1200" height="700" fill="black" />
-            <path d={ROUTE_PATH} pathLength="1000" stroke="white" strokeWidth="34" strokeLinecap="round" fill="none" className="pc-route-mask" />
+            <path d={DESKTOP_ROUTE} pathLength="1000" stroke="white" strokeWidth="34" strokeLinecap="round" fill="none" className="pc-route-mask" />
           </mask>
         </defs>
-
-        {/* O único caminho visual da animação. Sem filtro SVG para evitar rasterização pesada no celular. */}
-        <path
-          d={ROUTE_PATH}
-          pathLength="1000"
-          stroke="#79A5BA"
-          strokeWidth="2.5"
-          strokeDasharray="3 10"
-          strokeLinecap="round"
-          opacity="0.95"
-          mask="url(#routeRevealMask)"
-        />
-
-        {/* Avião de papel: permanece no mesmo caminho do rastro. */}
+        <path d={DESKTOP_ROUTE} pathLength="1000" stroke="#79A5BA" strokeWidth="2.5" strokeDasharray="3 10" strokeLinecap="round" opacity="0.95" mask="url(#routeRevealDesktop)" />
         <g className="pc-airplane-svg">
-          <g transform="translate(-30 -30) scale(0.60)">
-            <path d="M12 49.5 91 9 64 91 46 59 12 49.5Z" fill="#F9FBFC" stroke="#6D8FA3" strokeWidth="2.5" strokeLinejoin="round" />
-            <path d="M12 49.5 91 9 46 59 12 49.5Z" fill="#E7F0F4" stroke="#6D8FA3" strokeWidth="2.5" strokeLinejoin="round" />
-            <path d="M46 59 91 9 64 91 46 59Z" fill="#D4E3EA" stroke="#6D8FA3" strokeWidth="2.5" strokeLinejoin="round" />
-            <path d="M46 59 64 91" stroke="#9CB5C3" strokeWidth="2" strokeLinecap="round" />
-          </g>
+          <PaperPlane />
           <animateMotion dur="5.6s" begin="0s" fill="freeze" rotate="auto">
-            <mpath href="#flightPath" />
+            <mpath href="#desktopFlightPath" />
           </animateMotion>
         </g>
-
-        <path id="flightPath" d={ROUTE_PATH} fill="none" opacity="0" />
+        <path id="desktopFlightPath" d={DESKTOP_ROUTE} fill="none" opacity="0" />
       </svg>
 
-      {/* O nome fica completamente fora da tela durante o voo e só aparece quando as portas começam a abrir. */}
+      {/* Mobile: rota vertical desenhada especificamente para a proporção do iPhone.
+          Não usamos preserveAspectRatio="none", portanto avião e tracejado não ficam deformados. */}
+      <svg
+        className="pc-flight-svg pc-flight-mobile absolute inset-0 z-30 h-full w-full"
+        viewBox="0 0 390 844"
+        preserveAspectRatio="xMidYMid meet"
+        fill="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <mask id="routeRevealMobile" maskUnits="userSpaceOnUse" x="0" y="0" width="390" height="844" mask-type="luminance">
+            <rect x="0" y="0" width="390" height="844" fill="black" />
+            <path d={MOBILE_ROUTE} pathLength="1000" stroke="white" strokeWidth="30" strokeLinecap="round" fill="none" className="pc-route-mask" />
+          </mask>
+        </defs>
+        <path d={MOBILE_ROUTE} pathLength="1000" stroke="#79A5BA" strokeWidth="2.5" strokeDasharray="3 10" strokeLinecap="round" opacity="0.95" mask="url(#routeRevealMobile)" />
+        <g className="pc-airplane-svg">
+          <PaperPlane />
+          <animateMotion dur="5.6s" begin="0s" fill="freeze" rotate="auto">
+            <mpath href="#mobileFlightPath" />
+          </animateMotion>
+        </g>
+        <path id="mobileFlightPath" d={MOBILE_ROUTE} fill="none" opacity="0" />
+      </svg>
+
       <div
         className={`pointer-events-none absolute inset-0 z-[70] flex items-center justify-center px-5 text-center transition-all duration-[900ms] ease-out ${isOpening ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
         aria-hidden={!isOpening}
